@@ -1,26 +1,142 @@
+/* globals.css - Neo-Brutalism Design System */
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Neo-Brutalism Color Palette */
+  --color-nb-yellow: #facc15;
+  --color-nb-pink: #f472b6;
+  --color-nb-purple: #c084fc;
+  --color-nb-cyan: #22d3ee;
+  --color-nb-green: #4ade80;
+  --color-nb-orange: #fb923c;
+  --color-nb-red: #f87171;
+  --color-nb-blue: #60a5fa;
+  
+  /* Shadow offsets */
+  --shadow-nb-sm: 4px 4px 0px 0px rgba(0,0,0,1);
+  --shadow-nb-md: 6px 6px 0px 0px rgba(0,0,0,1);
+  --shadow-nb-lg: 8px 8px 0px 0px rgba(0,0,0,1);
+  --shadow-nb-xl: 12px 12px 0px 0px rgba(0,0,0,1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #fef9c3;
+  --foreground: #000000;
+}
+
+.dark {
+  --background: #1a0533;
+  --foreground: #f5f5f5;
+}
+
+/* Neo-Brutalism Utility Classes */
+.btn-nb {
+  cursor: pointer;
+  font-weight: 900;
+  border: 4px solid black;
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+  transition: all 150ms ease;
+}
+.btn-nb:hover {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+.btn-nb:active {
+  box-shadow: none;
+  transform: translate(3px, 3px);
+}
+
+.card-nb {
+  border: 4px solid black;
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  transition: all 150ms ease;
+}
+
+.card-nb-hover {
+  border: 4px solid black;
+  box-shadow: 8px 8px 0px 0px rgba(0,0,0,1);
+  transition: all 150ms ease;
+}
+.card-nb-hover:hover {
+  box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
+  transform: translate(-2px, -2px);
+}
+
+.input-nb {
+  border: 4px solid black;
+  background: white;
+  color: black;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+  transition: all 150ms ease;
+  outline: none;
+}
+.input-nb:focus {
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);
+  transform: translate(-1px, -1px);
+}
+
+.badge-nb {
+  display: inline-block;
+  border: 2px solid black;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  box-shadow: 3px 3px 0px 0px rgba(0,0,0,1);
+}
+
+.link-nb {
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 4px;
+  text-underline-offset: 4px;
+  transition: background-color 150ms ease;
+}
+.link-nb:hover {
+  background-color: var(--color-nb-yellow);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #fef9c3;
+  border-left: 4px solid black;
+}
+::-webkit-scrollbar-thumb {
+  background: #000;
+  border: 2px solid #fef9c3;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #1a0533;
+  border-left: 4px solid #c084fc;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #c084fc;
+  border: 2px solid #1a0533;
+}
+
+/* Selection */
+::selection {
+  background: #facc15;
+  color: black;
+}
+.dark ::selection {
+  background: #c084fc;
+  color: black;
 }
