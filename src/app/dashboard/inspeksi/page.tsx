@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import SearchableSelect from "@/components/SearchableSelect";
+import { Pagination } from "@/components";
 import * as XLSX from "xlsx";
 
 /* ------------------------------------------------------------------ */
@@ -78,6 +79,10 @@ export default function InspeksiPage() {
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
   const [filterIsu, setFilterIsu] = useState("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   /* ---- Fetch Data ---- */
   const fetchRiwayat = useCallback(async () => {
@@ -236,6 +241,10 @@ export default function InspeksiPage() {
 
     return passStart && passEnd && passIsu;
   });
+
+  const paginatedList = pageSize === 0 
+    ? filteredList 
+    : filteredList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleExportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(filteredList.map(i => {
@@ -441,18 +450,18 @@ export default function InspeksiPage() {
         <div className="flex flex-wrap gap-4 flex-1">
           <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Mulai Tanggal</label>
-            <input type="date" value={filterStartDate} onChange={e => setFilterStartDate(e.target.value)} className="input-nb py-2 text-sm w-40" />
+            <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setCurrentPage(1); }} className="input-nb py-2 text-sm w-40" />
           </div>
           <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Sampai Tanggal</label>
-            <input type="date" value={filterEndDate} onChange={e => setFilterEndDate(e.target.value)} className="input-nb py-2 text-sm w-40" />
+            <input type="date" value={filterEndDate} onChange={e => { setFilterEndDate(e.target.value); setCurrentPage(1); }} className="input-nb py-2 text-sm w-40" />
           </div>
           <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Filter Status Isu</label>
             <div className="w-56">
               <SearchableSelect
                 value={filterIsu}
-                onChange={val => setFilterIsu(val)}
+                onChange={val => { setFilterIsu(val); setCurrentPage(1); }}
                 options={[
                   {value: "", label: "Semua Status"},
                   {value: "baru", label: "Ada Isu Baru"},
@@ -505,7 +514,7 @@ export default function InspeksiPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredList.map((i, idx) => (
+                {paginatedList.map((i, idx) => (
                   <tr key={i.id_inspeksi} className={`border-b-4 border-black hover:bg-nb-green/20 ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
                     <td className="p-3 font-black text-black dark:text-white border-r-4 border-black align-top">
                       {new Date(i.tgl_inspeksi).toLocaleDateString('en-GB')}
@@ -561,6 +570,15 @@ export default function InspeksiPage() {
               </tbody>
             </table>
           </div>
+        )}
+        {filteredList.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={filteredList.length}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
       </div>
     </div>

@@ -7,3 +7,4 @@ export { default as Badge } from "./Badge";
 export { default as StatCard } from "./StatCard";
 export { default as ThemeToggle } from "./ThemeToggle";
 export { default as Navigation } from "./Navigation";
+export { default as Pagination } from "./Pagination";

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import SearchableSelect from "@/components/SearchableSelect";
+import { Pagination } from "@/components";
 import * as XLSX from "xlsx";
 
 /* ------------------------------------------------------------------ */
@@ -56,6 +57,10 @@ export default function MutasiPage() {
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
   const [filterAsset, setFilterAsset] = useState("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   /* ---- Fetch Data ---- */
   const fetchRiwayat = useCallback(async () => {
@@ -155,6 +160,10 @@ export default function MutasiPage() {
     const passAsset = filterAsset ? m.asset_code === filterAsset : true;
     return passStart && passEnd && passAsset;
   });
+
+  const paginatedList = pageSize === 0 
+    ? filteredList 
+    : filteredList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleExportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(filteredList.map(m => ({
@@ -340,18 +349,18 @@ export default function MutasiPage() {
         <div className="flex flex-wrap gap-4 flex-1">
           <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Mulai Tanggal</label>
-            <input type="date" value={filterStartDate} onChange={e => setFilterStartDate(e.target.value)} className="input-nb py-2 text-sm w-40" />
+            <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setCurrentPage(1); }} className="input-nb py-2 text-sm w-40" />
           </div>
           <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Sampai Tanggal</label>
-            <input type="date" value={filterEndDate} onChange={e => setFilterEndDate(e.target.value)} className="input-nb py-2 text-sm w-40" />
+            <input type="date" value={filterEndDate} onChange={e => { setFilterEndDate(e.target.value); setCurrentPage(1); }} className="input-nb py-2 text-sm w-40" />
           </div>
           <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Filter Aset Pompa</label>
             <div className="w-56">
               <SearchableSelect
                 value={filterAsset}
-                onChange={val => setFilterAsset(val)}
+                onChange={val => { setFilterAsset(val); setCurrentPage(1); }}
                 options={[{value: "", label: "Semua Aset"}, ...uniqueAssets]}
                 placeholder="Semua Aset"
               />
@@ -415,7 +424,7 @@ export default function MutasiPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredList.map((m, idx) => (
+                {paginatedList.map((m, idx) => (
                   <tr
                     key={m.id_mutasi}
                     className={`border-b-4 border-black transition-colors duration-100 hover:bg-nb-pink/20 ${
@@ -450,6 +459,15 @@ export default function MutasiPage() {
               </tbody>
             </table>
           </div>
+        )}
+        {filteredList.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={filteredList.length}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
       </div>
     </div>

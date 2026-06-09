@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import * as XLSX from "xlsx";
 import SearchableSelect from "@/components/SearchableSelect";
+import { Pagination } from "@/components";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -70,6 +71,10 @@ export default function AsetPage() {
   const [filterEstate, setFilterEstate] = useState("");
   const [filterJenis, setFilterJenis] = useState("");
   const [filterMerek, setFilterMerek] = useState("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // Form state
   const [form, setForm] = useState({
@@ -191,6 +196,10 @@ export default function AsetPage() {
       (filterMerek === "" || a.merek === filterMerek)
     );
   });
+
+  const paginatedList = pageSize === 0 
+    ? filteredList 
+    : filteredList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleExportExcel = () => {
     const ws = XLSX.utils.json_to_sheet(filteredList.map(a => ({
@@ -423,7 +432,7 @@ export default function AsetPage() {
             <div className="w-48">
               <SearchableSelect
                 value={filterEstate}
-                onChange={(val) => setFilterEstate(val)}
+                onChange={(val) => { setFilterEstate(val); setCurrentPage(1); }}
                 options={[{ value: "", label: "Semua Estate" }, ...estateList.map((e) => ({ value: e.estate_code, label: e.estate_name }))]}
                 placeholder="Semua Estate"
               />
@@ -434,7 +443,7 @@ export default function AsetPage() {
             <div className="w-48">
               <SearchableSelect
                 value={filterJenis}
-                onChange={(val) => setFilterJenis(val)}
+                onChange={(val) => { setFilterJenis(val); setCurrentPage(1); }}
                 options={[{ value: "", label: "Semua Jenis" }, ...uniqueJenis.map((j) => ({ value: j, label: j }))]}
                 placeholder="Semua Jenis"
               />
@@ -445,7 +454,7 @@ export default function AsetPage() {
             <div className="w-48">
               <SearchableSelect
                 value={filterMerek}
-                onChange={(val) => setFilterMerek(val)}
+                onChange={(val) => { setFilterMerek(val); setCurrentPage(1); }}
                 options={[{ value: "", label: "Semua Merek" }, ...uniqueMerek.map((m) => ({ value: m, label: m }))]}
                 placeholder="Semua Merek"
               />
@@ -521,7 +530,7 @@ export default function AsetPage() {
                 </tr>
               </thead>
               <tbody>
-                {filteredList.map((a, idx) => (
+                {paginatedList.map((a, idx) => (
                   <tr
                     key={a.asset_code}
                     className={`border-t-3 border-black transition-colors duration-100 hover:bg-nb-yellow/30 ${
@@ -580,6 +589,15 @@ export default function AsetPage() {
               </tbody>
             </table>
           </div>
+        )}
+        {filteredList.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            pageSize={pageSize}
+            totalItems={filteredList.length}
+            onPageChange={setCurrentPage}
+            onPageSizeChange={setPageSize}
+          />
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import SearchableSelect from "@/components/SearchableSelect";
+import { Pagination } from "@/components";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -40,6 +41,10 @@ interface User {
 /* ------------------------------------------------------------------ */
 export default function MasterPage() {
   const [activeTab, setActiveTab] = useState<"estate" | "tipe" | "kerusakan" | "user">("estate");
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   // State Data
   const [estateList, setEstateList] = useState<Estate[]>([]);
@@ -105,6 +110,7 @@ export default function MasterPage() {
     setEditingTipeId(null); setTipeForm(initTipeForm);
     setEditingKerusakanId(null); setKerusakanForm(initKerusakanForm);
     setEditingUserId(null); setUserForm(initUserForm);
+    setCurrentPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
@@ -359,33 +365,36 @@ export default function MasterPage() {
                <span className="badge-nb bg-nb-blue text-black">{estateList.length} data</span>
              </div>
              {loading ? <div className="p-8 text-center font-black">⏳ Memuat...</div> : (
-               <div className="overflow-x-auto">
-                 <table className="w-full">
-                   <thead>
-                     <tr className="bg-nb-yellow text-black border-b-4 border-black">
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Code</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Name</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Company</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Region</th>
-                       <th className="p-3 text-center font-black uppercase">Aksi</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     {estateList.map((e, idx) => (
-                       <tr key={e.estate_code} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
-                         <td className="p-3 font-black border-r-4 border-black text-nb-purple">{e.estate_code}</td>
-                         <td className="p-3 font-bold border-r-4 border-black">{e.estate_name}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-gray-500">{e.company_code || "-"}</td>
-                         <td className="p-3 font-bold border-r-4 border-black">{e.region || "-"}</td>
-                         <td className="p-3 text-center">
-                           <button onClick={() => handleEditEstate(e)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
-                         </td>
+               <>
+                 <div className="overflow-x-auto">
+                   <table className="w-full">
+                     <thead>
+                       <tr className="bg-nb-yellow text-black border-b-4 border-black">
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Code</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Name</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Company</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Region</th>
+                         <th className="p-3 text-center font-black uppercase">Aksi</th>
                        </tr>
-                     ))}
-                     {estateList.length === 0 && <tr><td colSpan={5} className="p-6 text-center font-bold">Belum ada data estate.</td></tr>}
-                   </tbody>
-                 </table>
-               </div>
+                     </thead>
+                     <tbody>
+                       {(pageSize === 0 ? estateList : estateList.slice((currentPage - 1) * pageSize, currentPage * pageSize)).map((e, idx) => (
+                         <tr key={e.estate_code} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
+                           <td className="p-3 font-black border-r-4 border-black text-nb-purple">{e.estate_code}</td>
+                           <td className="p-3 font-bold border-r-4 border-black">{e.estate_name}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-gray-500">{e.company_code || "-"}</td>
+                           <td className="p-3 font-bold border-r-4 border-black">{e.region || "-"}</td>
+                           <td className="p-3 text-center">
+                             <button onClick={() => handleEditEstate(e)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
+                           </td>
+                         </tr>
+                       ))}
+                       {estateList.length === 0 && <tr><td colSpan={5} className="p-6 text-center font-bold">Belum ada data estate.</td></tr>}
+                     </tbody>
+                   </table>
+                 </div>
+                 <Pagination totalItems={estateList.length} currentPage={currentPage} pageSize={pageSize} onPageChange={setCurrentPage} onPageSizeChange={setPageSize} />
+               </>
              )}
           </div>
         </div>
@@ -448,37 +457,40 @@ export default function MasterPage() {
                <span className="badge-nb bg-nb-pink text-black">{tipeList.length} data</span>
              </div>
              {loading ? <div className="p-8 text-center font-black">⏳ Memuat...</div> : (
-               <div className="overflow-x-auto">
-                 <table className="w-full">
-                   <thead>
-                     <tr className="bg-nb-yellow text-black border-b-4 border-black">
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">ID</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Jenis</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Merek</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Mesin</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Debit</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">HP</th>
-                       <th className="p-3 text-center font-black uppercase">Aksi</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     {tipeList.map((t, idx) => (
-                       <tr key={t.id_tipe} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
-                         <td className="p-3 font-black border-r-4 border-black">{t.id_tipe}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-nb-purple">{t.jenis_pompa}</td>
-                         <td className="p-3 font-bold border-r-4 border-black">{t.merek || "-"}</td>
-                         <td className="p-3 font-bold border-r-4 border-black">{t.mesin_penggerak || "-"}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-gray-500">{t.debit_m3_jam || "-"}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-gray-500">{t.hp_mesin || "-"}</td>
-                         <td className="p-3 text-center">
-                           <button onClick={() => handleEditTipe(t)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
-                         </td>
+               <>
+                 <div className="overflow-x-auto">
+                   <table className="w-full">
+                     <thead>
+                       <tr className="bg-nb-yellow text-black border-b-4 border-black">
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">ID</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Jenis</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Merek</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Mesin</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Debit</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">HP</th>
+                         <th className="p-3 text-center font-black uppercase">Aksi</th>
                        </tr>
-                     ))}
-                     {tipeList.length === 0 && <tr><td colSpan={7} className="p-6 text-center font-bold">Belum ada data tipe pompa.</td></tr>}
-                   </tbody>
-                 </table>
-               </div>
+                     </thead>
+                     <tbody>
+                       {(pageSize === 0 ? tipeList : tipeList.slice((currentPage - 1) * pageSize, currentPage * pageSize)).map((t, idx) => (
+                         <tr key={t.id_tipe} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
+                           <td className="p-3 font-black border-r-4 border-black">{t.id_tipe}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-nb-purple">{t.jenis_pompa}</td>
+                           <td className="p-3 font-bold border-r-4 border-black">{t.merek || "-"}</td>
+                           <td className="p-3 font-bold border-r-4 border-black">{t.mesin_penggerak || "-"}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-gray-500">{t.debit_m3_jam || "-"}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-gray-500">{t.hp_mesin || "-"}</td>
+                           <td className="p-3 text-center">
+                             <button onClick={() => handleEditTipe(t)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
+                           </td>
+                         </tr>
+                       ))}
+                       {tipeList.length === 0 && <tr><td colSpan={7} className="p-6 text-center font-bold">Belum ada data tipe pompa.</td></tr>}
+                     </tbody>
+                   </table>
+                 </div>
+                 <Pagination totalItems={tipeList.length} currentPage={currentPage} pageSize={pageSize} onPageChange={setCurrentPage} onPageSizeChange={setPageSize} />
+               </>
              )}
           </div>
         </div>
@@ -532,33 +544,36 @@ export default function MasterPage() {
                <span className="badge-nb bg-nb-purple text-black">{kerusakanList.length} data</span>
              </div>
              {loading ? <div className="p-8 text-center font-black">⏳ Memuat...</div> : (
-               <div className="overflow-x-auto">
-                 <table className="w-full">
-                   <thead>
-                     <tr className="bg-nb-yellow text-black border-b-4 border-black">
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black w-16">ID</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Nama Kerusakan</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Kategori</th>
-                       <th className="p-3 text-center font-black uppercase">Aksi</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     {kerusakanList.map((k, idx) => (
-                       <tr key={k.id_kerusakan} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
-                         <td className="p-3 font-black border-r-4 border-black">{k.id_kerusakan}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-nb-pink">{k.nama_kerusakan}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-gray-500">
-                           {k.kategori ? <span className="badge-nb bg-white text-black">{k.kategori}</span> : "-"}
-                         </td>
-                         <td className="p-3 text-center">
-                           <button onClick={() => handleEditKerusakan(k)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
-                         </td>
+               <>
+                 <div className="overflow-x-auto">
+                   <table className="w-full">
+                     <thead>
+                       <tr className="bg-nb-yellow text-black border-b-4 border-black">
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black w-16">ID</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Nama Kerusakan</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Kategori</th>
+                         <th className="p-3 text-center font-black uppercase">Aksi</th>
                        </tr>
-                     ))}
-                     {kerusakanList.length === 0 && <tr><td colSpan={4} className="p-6 text-center font-bold">Belum ada data jenis kerusakan.</td></tr>}
-                   </tbody>
-                 </table>
-               </div>
+                     </thead>
+                     <tbody>
+                       {(pageSize === 0 ? kerusakanList : kerusakanList.slice((currentPage - 1) * pageSize, currentPage * pageSize)).map((k, idx) => (
+                         <tr key={k.id_kerusakan} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
+                           <td className="p-3 font-black border-r-4 border-black">{k.id_kerusakan}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-nb-pink">{k.nama_kerusakan}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-gray-500">
+                             {k.kategori ? <span className="badge-nb bg-white text-black">{k.kategori}</span> : "-"}
+                           </td>
+                           <td className="p-3 text-center">
+                             <button onClick={() => handleEditKerusakan(k)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
+                           </td>
+                         </tr>
+                       ))}
+                       {kerusakanList.length === 0 && <tr><td colSpan={4} className="p-6 text-center font-bold">Belum ada data jenis kerusakan.</td></tr>}
+                     </tbody>
+                   </table>
+                 </div>
+                 <Pagination totalItems={kerusakanList.length} currentPage={currentPage} pageSize={pageSize} onPageChange={setCurrentPage} onPageSizeChange={setPageSize} />
+               </>
              )}
           </div>
         </div>
@@ -619,37 +634,40 @@ export default function MasterPage() {
                <span className="badge-nb bg-nb-green text-black">{userList.length} akun</span>
              </div>
              {loading ? <div className="p-8 text-center font-black">⏳ Memuat...</div> : (
-               <div className="overflow-x-auto">
-                 <table className="w-full">
-                   <thead>
-                     <tr className="bg-nb-yellow text-black border-b-4 border-black">
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black w-16">ID</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Username</th>
-                       <th className="p-3 text-left font-black uppercase border-r-4 border-black">Role Akses</th>
-                       <th className="p-3 text-center font-black uppercase">Aksi</th>
-                     </tr>
-                   </thead>
-                   <tbody>
-                     {userList.map((u, idx) => (
-                       <tr key={u.id_user} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
-                         <td className="p-3 font-black border-r-4 border-black">{u.id_user}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-nb-blue">{u.username}</td>
-                         <td className="p-3 font-bold border-r-4 border-black text-gray-500">
-                           {u.role === "admin" ? (
-                             <span className="badge-nb bg-nb-orange text-black">ADMIN</span>
-                           ) : (
-                             <span className="badge-nb bg-nb-cyan text-black">OPERATOR</span>
-                           )}
-                         </td>
-                         <td className="p-3 text-center">
-                           <button onClick={() => handleEditUser(u)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
-                         </td>
+               <>
+                 <div className="overflow-x-auto">
+                   <table className="w-full">
+                     <thead>
+                       <tr className="bg-nb-yellow text-black border-b-4 border-black">
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black w-16">ID</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Username</th>
+                         <th className="p-3 text-left font-black uppercase border-r-4 border-black">Role Akses</th>
+                         <th className="p-3 text-center font-black uppercase">Aksi</th>
                        </tr>
-                     ))}
-                     {userList.length === 0 && <tr><td colSpan={4} className="p-6 text-center font-bold">Belum ada data user.</td></tr>}
-                   </tbody>
-                 </table>
-               </div>
+                     </thead>
+                     <tbody>
+                       {(pageSize === 0 ? userList : userList.slice((currentPage - 1) * pageSize, currentPage * pageSize)).map((u, idx) => (
+                         <tr key={u.id_user} className={`border-b-4 border-black ${idx % 2 === 0 ? "bg-white dark:bg-gray-900" : "bg-gray-50 dark:bg-gray-800"}`}>
+                           <td className="p-3 font-black border-r-4 border-black">{u.id_user}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-nb-blue">{u.username}</td>
+                           <td className="p-3 font-bold border-r-4 border-black text-gray-500">
+                             {u.role === "admin" ? (
+                               <span className="badge-nb bg-nb-orange text-black">ADMIN</span>
+                             ) : (
+                               <span className="badge-nb bg-nb-cyan text-black">OPERATOR</span>
+                             )}
+                           </td>
+                           <td className="p-3 text-center">
+                             <button onClick={() => handleEditUser(u)} className="btn-nb bg-nb-yellow text-black px-3 py-1 text-xs">Edit</button>
+                           </td>
+                         </tr>
+                       ))}
+                       {userList.length === 0 && <tr><td colSpan={4} className="p-6 text-center font-bold">Belum ada data user.</td></tr>}
+                     </tbody>
+                   </table>
+                 </div>
+                 <Pagination totalItems={userList.length} currentPage={currentPage} pageSize={pageSize} onPageChange={setCurrentPage} onPageSizeChange={setPageSize} />
+               </>
              )}
           </div>
         </div>
