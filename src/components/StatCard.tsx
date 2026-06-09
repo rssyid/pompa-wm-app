@@ -20,9 +20,14 @@ const StatCard = ({ title, value, icon, color = "bg-white", trend, trendValue }:
           <p className="text-sm font-black uppercase tracking-wider text-black/70 dark:text-white/70">{title}</p>
           <p className="text-4xl font-black mt-2 text-black dark:text-white">{value}</p>
           {trend && trendValue && (
-            <p className={`text-sm font-bold mt-2 ${trendColors[trend]}`}>
-              {trendIcons[trend]} {trendValue}
-            </p>
+            <div className="mt-3">
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-white border-2 border-black text-black font-black text-xs shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                <span className={trend === 'up' ? 'text-green-600' : trend === 'down' ? 'text-red-600' : 'text-gray-600'}>
+                  {trendIcons[trend]}
+                </span>
+                {trendValue}
+              </span>
+            </div>
           )}
         </div>
         {icon && (

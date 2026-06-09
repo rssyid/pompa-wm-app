@@ -25,7 +25,7 @@ export default function LoginPage() {
 
       if (res.ok) {
         // Redirect to dashboard
-        router.push("/dashboard/aset");
+        router.push("/dashboard");
         router.refresh(); // Refresh the layout to update the session state
       } else {
         setError(data.error || "Gagal login. Periksa username dan password.");

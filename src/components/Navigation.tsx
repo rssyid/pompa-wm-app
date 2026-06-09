@@ -20,6 +20,7 @@ export default function Navigation({ user }: { user: UserPayload | null }) {
   };
 
   const navItems = [
+    { href: "/dashboard", label: "Dashboard", icon: "📊", color: "bg-nb-yellow" },
     { href: "/dashboard/aset", label: "Aset Pompa", icon: "💧", color: "bg-nb-cyan" },
     { href: "/dashboard/mutasi", label: "Mutasi", icon: "🔄", color: "bg-nb-pink" },
     { href: "/dashboard/inspeksi", label: "Inspeksi", icon: "🔍", color: "bg-nb-green" },
@@ -35,7 +36,7 @@ export default function Navigation({ user }: { user: UserPayload | null }) {
       <div className="max-w-[1400px] mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/dashboard/aset" className="flex items-center gap-3 group">
+          <Link href="/dashboard" className="flex items-center gap-3 group">
             <div className="border-4 border-black bg-nb-yellow p-2 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-none group-hover:translate-x-[2px] group-hover:translate-y-[2px] transition-all duration-150">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z" />
@@ -49,7 +50,7 @@ export default function Navigation({ user }: { user: UserPayload | null }) {
           {/* Nav Items */}
           <div className="hidden md:flex items-center gap-2">
             {navItems.map((item) => {
-              const isActive = pathname.startsWith(item.href);
+              const isActive = item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
@@ -84,7 +85,7 @@ export default function Navigation({ user }: { user: UserPayload | null }) {
         {/* Mobile Nav */}
         <div className="flex md:hidden gap-2 mt-3 overflow-x-auto pb-1">
           {navItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive = item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
