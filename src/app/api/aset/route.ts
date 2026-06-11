@@ -49,9 +49,9 @@ export async function POST(request: Request) {
       kondisi_terkini,
     } = body;
 
-    if (!asset_code || !asset_name || !id_tipe || !est_code) {
+    if (!asset_code || !asset_name || !est_code) {
       return NextResponse.json(
-        { error: "Field asset_code, asset_name, id_tipe, dan est_code wajib diisi." },
+        { error: "Field asset_code, asset_name, dan est_code wajib diisi." },
         { status: 400 }
       );
     }
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
       [
         asset_code,
         asset_name,
-        id_tipe,
+        id_tipe || null,
         est_code,
         est_code_deployed || null,
         tahun_perolehan || null,
@@ -91,9 +91,9 @@ export async function PUT(request: Request) {
       tahun_perolehan,
     } = body;
 
-    if (!asset_code || !asset_name || !id_tipe || !est_code) {
+    if (!asset_code || !asset_name || !est_code) {
       return NextResponse.json(
-        { error: "Field asset_code, asset_name, id_tipe, dan est_code wajib diisi." },
+        { error: "Field asset_code, asset_name, dan est_code wajib diisi." },
         { status: 400 }
       );
     }
@@ -106,7 +106,7 @@ export async function PUT(request: Request) {
        RETURNING *`,
       [
         asset_name,
-        id_tipe,
+        id_tipe || null,
         est_code,
         tahun_perolehan || null,
         asset_code,

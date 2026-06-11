@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Pagination } from "@/components";
+import Link from "next/link";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -262,11 +263,16 @@ export default function MasterPage() {
   return (
     <div>
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-black text-black dark:text-white uppercase tracking-tight">
-          Master Data
-        </h1>
-        <div className="h-2 bg-nb-orange border-2 border-black mt-2 w-48" />
+      <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-black text-black dark:text-white uppercase tracking-tight">
+            Master Data
+          </h1>
+          <div className="h-2 bg-nb-orange border-2 border-black mt-2 w-48" />
+        </div>
+        <Link href="/dashboard/master/upload" className="btn-nb bg-black text-white px-6 py-3 font-black flex items-center gap-2">
+          📤 Bulk Upload Data
+        </Link>
       </div>
 
       {/* Tabs */}
