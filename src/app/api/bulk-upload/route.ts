@@ -84,6 +84,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Tipe upload tidak valid." }, { status: 400 });
     }
 
+    if (successCount === 0) {
+      await client.query("ROLLBACK");
+      return NextResponse.json({ 
+        error: "Tidak ada data yang berhasil disimpan. Pastikan format kolom (header) CSV benar-benar sesuai template.",
+        errors 
+      }, { status: 400 });
+    }
+
     await client.query("COMMIT");
 
     return NextResponse.json({

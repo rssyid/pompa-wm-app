@@ -24,6 +24,27 @@ export default function BulkUploadPage() {
       header: true,
       skipEmptyLines: true,
       complete: async (results) => {
+        if (results.data.length === 0) {
+          setResult({ type: "error", msg: "File CSV kosong atau tidak bisa dibaca." });
+          setLoading(false);
+          return;
+        }
+
+        // Validasi Header Dasar
+        const firstRow = results.data[0] as any;
+        const headers = Object.keys(firstRow).map(k => k.replace(/^\uFEFF/, '').trim());
+        
+        if (type === "estate" && (!headers.includes("estate_code") || !headers.includes("estate_name"))) {
+          setResult({ type: "error", msg: "Format salah! File harus memiliki kolom 'estate_code' dan 'estate_name'." });
+          setLoading(false);
+          return;
+        }
+        if (type === "aset" && (!headers.includes("asset_code") || !headers.includes("asset_name") || !headers.includes("est_code"))) {
+          setResult({ type: "error", msg: "Format salah! File harus memiliki kolom 'asset_code', 'asset_name', dan 'est_code'. Jika Anda menggunakan Excel, pastikan file disimpan sebagai 'CSV (Comma delimited)' bukan titik koma (;)." });
+          setLoading(false);
+          return;
+        }
+
         try {
           const res = await fetch("/api/bulk-upload", {
             method: "POST",
