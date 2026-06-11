@@ -284,8 +284,8 @@ export default function RiwayatPage() {
           <div className="bg-black p-4 border-b-4 border-black">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div>
-                <div className="text-xl font-black text-white leading-tight">{asetInfo.asset_name}</div>
-                <div className="text-sm font-bold text-white/50 tracking-wide">{asetInfo.asset_code}</div>
+                <div className="text-xl font-black text-white leading-tight">{asetInfo.asset_code}</div>
+                <div className="text-sm font-bold text-white/50 tracking-wide">{asetInfo.asset_name}</div>
               </div>
               <span className={`badge-nb text-black text-sm ${KONDISI_COLORS[asetInfo.kondisi_terkini] || "bg-gray-300"}`}>
                 🔧 {asetInfo.kondisi_terkini}

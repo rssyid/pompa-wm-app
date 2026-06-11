@@ -540,9 +540,9 @@ export default function AsetPage() {
                       {idx + 1}
                     </td>
                     <td className="p-3 border-r-2 border-black/10">
-                      <div className="font-black text-black dark:text-white text-base leading-tight">{a.asset_name}</div>
-                      {a.asset_code && (
-                        <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{a.asset_code}</div>
+                      <div className="font-black text-black dark:text-white text-base leading-tight">{a.asset_code}</div>
+                      {a.asset_name && (
+                        <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{a.asset_name}</div>
                       )}
                     </td>
                     <td className="p-3 font-bold text-black dark:text-white border-r-2 border-black/10">
