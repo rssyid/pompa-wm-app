@@ -19,7 +19,12 @@ export async function POST(request: Request) {
     if (type === "estate") {
       for (const row of data) {
         try {
-          if (!row.estate_code || !row.estate_name) {
+          const cleanRow: any = {};
+          for (const k in row) {
+            const cleanKey = k.replace(/^\uFEFF/, '').trim();
+            cleanRow[cleanKey] = typeof row[k] === 'string' ? row[k].trim() : row[k];
+          }
+          if (!cleanRow.estate_code || !cleanRow.estate_name) {
             errors.push(`Baris dilewati: estate_code atau estate_name kosong.`);
             continue;
           }
@@ -30,17 +35,22 @@ export async function POST(request: Request) {
              SET estate_name = EXCLUDED.estate_name,
                  company_code = EXCLUDED.company_code,
                  region = EXCLUDED.region`,
-            [row.estate_code, row.estate_name, row.company_code || null, row.region || null]
+            [cleanRow.estate_code, cleanRow.estate_name, cleanRow.company_code || null, cleanRow.region || null]
           );
           successCount++;
         } catch (e: any) {
-          errors.push(`Gagal estate ${row.estate_code}: ${e.message}`);
+          errors.push(`Gagal estate ${row.estate_code || 'unknown'}: ${e.message}`);
         }
       }
     } else if (type === "aset") {
       for (const row of data) {
         try {
-          if (!row.asset_code || !row.asset_name || !row.est_code) {
+          const cleanRow: any = {};
+          for (const k in row) {
+            const cleanKey = k.replace(/^\uFEFF/, '').trim();
+            cleanRow[cleanKey] = typeof row[k] === 'string' ? row[k].trim() : row[k];
+          }
+          if (!cleanRow.asset_code || !cleanRow.asset_name || !cleanRow.est_code) {
             errors.push(`Baris dilewati: asset_code, asset_name, atau est_code kosong.`);
             continue;
           }
@@ -55,18 +65,18 @@ export async function POST(request: Request) {
                  tahun_perolehan = EXCLUDED.tahun_perolehan,
                  kondisi_terkini = EXCLUDED.kondisi_terkini`,
             [
-              row.asset_code,
-              row.asset_name,
+              cleanRow.asset_code,
+              cleanRow.asset_name,
               null, // id_tipe dibiarkan null sementara
-              row.est_code,
-              row.est_code, // default deployed ke estate asal
-              row.tahun_perolehan ? parseInt(row.tahun_perolehan, 10) : null,
-              row.kondisi_terkini || "baik",
+              cleanRow.est_code,
+              cleanRow.est_code, // default deployed ke estate asal
+              cleanRow.tahun_perolehan && !isNaN(parseInt(cleanRow.tahun_perolehan, 10)) ? parseInt(cleanRow.tahun_perolehan, 10) : null,
+              cleanRow.kondisi_terkini || "baik",
             ]
           );
           successCount++;
         } catch (e: any) {
-          errors.push(`Gagal aset ${row.asset_code}: ${e.message}`);
+          errors.push(`Gagal aset ${row.asset_code || 'unknown'}: ${e.message}`);
         }
       }
     } else {
