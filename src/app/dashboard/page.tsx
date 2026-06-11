@@ -6,6 +6,11 @@ import StatCard from "@/components/StatCard";
 
 interface Aset {
   asset_code: string;
+  asset_name: string;
+  kondisi_terkini: string;
+  estate_name: string;
+  estate_deployed_name: string;
+  block_deployed: string;
 }
 interface Inspeksi {
   id_inspeksi: number;
@@ -28,7 +33,7 @@ export default function DashboardPage() {
   const [totalInspeksi, setTotalInspeksi] = useState(0);
   const [totalMutasi, setTotalMutasi] = useState(0);
   const [recentMutasi, setRecentMutasi] = useState<Mutasi[]>([]);
-  const [openIssues, setOpenIssues] = useState<Inspeksi[]>([]);
+  const [brokenAsets, setBrokenAsets] = useState<Aset[]>([]);
 
   useEffect(() => {
     // Fetch summary data
@@ -37,25 +42,18 @@ export default function DashboardPage() {
       fetch("/api/inspeksi").then((res) => res.json()),
       fetch("/api/mutasi").then((res) => res.json()),
     ]).then(([asetData, inspeksiData, mutasiData]) => {
-      if (Array.isArray(asetData)) setTotalAset(asetData.length);
+      if (Array.isArray(asetData)) {
+        setTotalAset(asetData.length);
+        // Filter aset dengan kondisi bermasalah (bukan 'baik')
+        // Sumber kebenaran: field kondisi_terkini yang diupdate otomatis saat inspeksi
+        const broken = asetData.filter(
+          (a: Aset) => a.kondisi_terkini && a.kondisi_terkini !== "baik"
+        );
+        setBrokenAsets(broken.slice(0, 5));
+      }
 
       if (Array.isArray(inspeksiData)) {
         setTotalInspeksi(inspeksiData.length);
-
-        // Find inspections that have open issues
-        // In a real scenario we'd query the open-issue endpoint, 
-        // but for a quick summary, filtering the history works well enough.
-        const withIssues = inspeksiData.filter(
-          (i) => i.issues_opened && i.issues_opened.length > 0
-        );
-        // Only get unique open issues per asset (latest inspection)
-        const uniqueIssues: Inspeksi[] = [];
-        withIssues.forEach(i => {
-           if (!uniqueIssues.find(u => u.asset_code === i.asset_code)) {
-               uniqueIssues.push(i);
-           }
-        });
-        setOpenIssues(uniqueIssues.slice(0, 5)); // top 5
       }
 
       if (Array.isArray(mutasiData)) {
@@ -94,10 +92,10 @@ export default function DashboardPage() {
         />
         <StatCard
           title="Pompa Bermasalah"
-          value={openIssues.length.toString()}
+          value={brokenAsets.length.toString()}
           color="bg-nb-red"
           trend="up"
-          trendValue="Open Issues"
+          trendValue="Kondisi tidak baik"
           icon={<span className="text-2xl">🚨</span>}
         />
         <StatCard
@@ -154,44 +152,34 @@ export default function DashboardPage() {
             </h2>
           </div>
           <div className="p-0">
-            {openIssues.length === 0 ? (
+            {brokenAsets.length === 0 ? (
               <div className="p-8 text-center font-bold text-black/70 dark:text-white/70">
                 ✅ Tidak ada isu kerusakan terbuka. Semua pompa dalam kondisi baik.
               </div>
             ) : (
               <ul className="divide-y-4 divide-black">
-                {openIssues.map((issue, idx) => (
+                {brokenAsets.map((aset, idx) => (
                   <li
                     key={idx}
                     className="p-4 hover:bg-nb-pink/10 transition-colors"
                   >
                     <div className="flex justify-between items-start mb-2">
                       <div className="font-black text-lg text-black dark:text-white">
-                        {issue.asset_name}
+                        {aset.asset_name}
                       </div>
-                      <span className="badge-nb bg-nb-red text-white text-xs">
-                        OPEN ISSUE
+                      <span className="badge-nb bg-nb-red text-white text-xs uppercase">
+                        {aset.kondisi_terkini}
                       </span>
                     </div>
-                    <div className="text-sm font-bold text-black/70 dark:text-white/70 mb-2">
-                      📍 Lokasi: {issue.estate_name}{" "}
-                      {issue.block ? `(${issue.block})` : ""}
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {issue.issues_opened.map((o: any, i: number) => (
-                        <span
-                          key={i}
-                          className="px-2 py-1 bg-black text-white text-xs font-bold"
-                        >
-                          {o.nama_kerusakan}
-                        </span>
-                      ))}
+                    <div className="text-sm font-bold text-black/70 dark:text-white/70">
+                      📍 {aset.estate_deployed_name || aset.estate_name}
+                      {aset.block_deployed ? ` — Blok ${aset.block_deployed}` : ""}
                     </div>
                   </li>
                 ))}
               </ul>
             )}
-            {openIssues.length > 0 && (
+            {brokenAsets.length > 0 && (
               <div className="p-4 border-t-4 border-black bg-gray-50 dark:bg-gray-800 text-center">
                 <Link
                   href="/dashboard/inspeksi"
