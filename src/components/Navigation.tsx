@@ -24,6 +24,7 @@ export default function Navigation({ user }: { user: UserPayload | null }) {
     { href: "/dashboard/aset", label: "Aset Pompa", icon: "💧", color: "bg-nb-cyan" },
     { href: "/dashboard/mutasi", label: "Mutasi", icon: "🔄", color: "bg-nb-pink" },
     { href: "/dashboard/inspeksi", label: "Inspeksi", icon: "🔍", color: "bg-nb-green" },
+    { href: "/dashboard/riwayat", label: "Riwayat", icon: "📋", color: "bg-nb-orange" },
   ];
 
   // Hanya admin yang bisa melihat Master Data
