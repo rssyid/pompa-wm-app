@@ -326,8 +326,8 @@ export default function RiwayatPage() {
       {/* Timeline */}
       {asetInfo && !loading && events.length > 0 && (
         <div className="relative">
-          {/* Garis tengah (desktop) */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 bg-black -translate-x-1/2 z-0" />
+          {/* Garis tengah (desktop) — mulai sedikit dari atas agar tidak menutupi card pertama */}
+          <div className="hidden md:block absolute left-1/2 top-6 bottom-8 w-1 bg-black -translate-x-1/2 z-0" />
 
           <div className="flex flex-col gap-0">
             {events.map((event, idx) => {
@@ -338,12 +338,12 @@ export default function RiwayatPage() {
                 <div key={event.id} className="relative flex items-start md:gap-0 gap-4 mb-8">
                   {/* ---- DESKTOP layout (zigzag) ---- */}
                   {/* Left side */}
-                  <div className={`hidden md:flex w-1/2 ${isLeft ? "pr-10 justify-end" : "pr-0 justify-end opacity-0 pointer-events-none"}`}>
+                  <div className={`hidden md:flex w-1/2 relative z-10 ${isLeft ? "pr-10 justify-end" : "pr-0 justify-end opacity-0 pointer-events-none"}`}>
                     {isLeft && <div className="w-full max-w-sm"><EventCard event={event} side="left" /></div>}
                   </div>
 
                   {/* Center dot */}
-                  <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 z-10 flex-col items-center">
+                  <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 z-20 flex-col items-center">
                     <div className={`w-5 h-5 border-4 border-black rounded-full mt-4 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] ${
                       event.type === "mutasi" ? "bg-nb-pink" :
                       (event as EventInspeksi).subtype === "kerusakan" ? "bg-nb-red" :
@@ -352,7 +352,7 @@ export default function RiwayatPage() {
                   </div>
 
                   {/* Right side */}
-                  <div className={`hidden md:flex w-1/2 ${!isLeft ? "pl-10 justify-start" : "pl-0 opacity-0 pointer-events-none"}`}>
+                  <div className={`hidden md:flex w-1/2 relative z-10 ${!isLeft ? "pl-10 justify-start" : "pl-0 opacity-0 pointer-events-none"}`}>
                     {!isLeft && <div className="w-full max-w-sm"><EventCard event={event} side="right" /></div>}
                   </div>
 
