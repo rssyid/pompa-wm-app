@@ -438,7 +438,9 @@ export default function MutasiPage() {
                     </td>
                     <td className="p-3 border-r-4 border-black">
                       <div className="font-black text-black dark:text-white text-base leading-tight">{m.asset_name}</div>
-                      <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{m.asset_code}</div>
+                      {m.asset_code && (
+                        <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{m.asset_code}</div>
+                      )}
                     </td>
                     <td className="p-3 font-bold text-black dark:text-white border-r-4 border-black">
                       {m.estate_name} <span className="text-xs opacity-70">({m.estate_tujuan})</span>

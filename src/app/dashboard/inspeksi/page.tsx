@@ -522,7 +522,9 @@ export default function InspeksiPage() {
                     </td>
                     <td className="p-3 border-r-4 border-black align-top">
                       <div className="font-black text-black dark:text-white text-base leading-tight">{i.asset_name}</div>
-                      <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{i.asset_code}</div>
+                      {i.asset_code && (
+                        <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{i.asset_code}</div>
+                      )}
                       <div className="text-sm font-bold text-black/70 dark:text-white/70 mt-1">📍 {i.estate_name}</div>
                       {i.block && <div className="text-xs font-bold text-gray-500">{i.block}</div>}
                     </td>
