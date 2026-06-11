@@ -23,6 +23,14 @@ export async function proxy(request: NextRequest) {
     }
   }
 
+  // Redirect root (/) ke /dashboard jika sudah login, atau ke /login jika belum
+  if (pathname === "/") {
+    if (user) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   // Identifikasi kategori route
   const isDashboardRoute = pathname.startsWith("/dashboard");
   const isApiRoute = pathname.startsWith("/api");
@@ -67,6 +75,7 @@ export async function proxy(request: NextRequest) {
 // Konfigurasi matcher untuk menerapkan middleware ini
 export const config = {
   matcher: [
+    "/",
     "/dashboard/:path*",
     "/api/:path*",
   ],
