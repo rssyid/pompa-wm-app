@@ -48,7 +48,10 @@ export default function DashboardPage() {
         // Filter aset dengan kondisi bermasalah (bukan 'baik')
         // Sumber kebenaran: field kondisi_terkini yang diupdate otomatis saat inspeksi
         const broken = asetData.filter(
-          (a: Aset) => a.kondisi_terkini && a.kondisi_terkini !== "baik"
+          (a: Aset) => {
+            const k = (a.kondisi_terkini || "").toLowerCase().trim();
+            return k !== "" && k !== "baik";
+          }
         );
         setBrokenAsets(broken.slice(0, 5));
       }
