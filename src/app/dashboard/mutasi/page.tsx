@@ -14,6 +14,7 @@ interface MutasiRiwayat {
   asset_name: string;
   estate_tujuan: string;
   estate_name: string;
+  company_code: string | null;
   block_tujuan: string | null;
   tgl_pindah: string;
   pic_name: string | null;
@@ -54,6 +55,7 @@ export default function MutasiPage() {
   });
 
   // Filters state
+  const [filterCompany, setFilterCompany] = useState("");
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
   const [filterAsset, setFilterAsset] = useState("");
@@ -153,12 +155,15 @@ export default function MutasiPage() {
   };
 
   /* ---- Derived Data (Filters & Export) ---- */
+  const uniqueCompany = Array.from(new Set(riwayatList.map(m => m.company_code).filter(Boolean))) as string[];
+
   const filteredList = riwayatList.filter(m => {
     const d = new Date(m.tgl_pindah);
     const passStart = filterStartDate ? d >= new Date(filterStartDate) : true;
     const passEnd = filterEndDate ? d <= new Date(filterEndDate) : true;
     const passAsset = filterAsset ? m.asset_code === filterAsset : true;
-    return passStart && passEnd && passAsset;
+    const passCompany = filterCompany ? m.company_code === filterCompany : true;
+    return passStart && passEnd && passAsset && passCompany;
   });
 
   const paginatedList = pageSize === 0 
@@ -348,6 +353,17 @@ export default function MutasiPage() {
       <div className="border-4 border-black bg-white dark:bg-gray-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8 p-4 flex flex-col md:flex-row gap-4 justify-between items-end">
         <div className="flex flex-wrap gap-4 flex-1">
           <div>
+            <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Filter Company</label>
+            <div className="w-40">
+              <SearchableSelect
+                value={filterCompany}
+                onChange={val => { setFilterCompany(val); setCurrentPage(1); }}
+                options={[{value: "", label: "Semua Company"}, ...uniqueCompany.map(c => ({ value: c, label: c }))]}
+                placeholder="Semua Company"
+              />
+            </div>
+          </div>
+          <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Mulai Tanggal</label>
             <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setCurrentPage(1); }} className="input-nb py-2 text-sm w-40" />
           </div>
@@ -410,6 +426,9 @@ export default function MutasiPage() {
                     Aset Pompa
                   </th>
                   <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-4 border-black">
+                    Company
+                  </th>
+                  <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-4 border-black">
                     Tujuan Estate
                   </th>
                   <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-4 border-black">
@@ -441,6 +460,9 @@ export default function MutasiPage() {
                       {m.asset_name && (
                         <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{m.asset_name}</div>
                       )}
+                    </td>
+                    <td className="p-3 font-bold text-black dark:text-white border-r-4 border-black">
+                      {m.company_code || "—"}
                     </td>
                     <td className="p-3 font-bold text-black dark:text-white border-r-4 border-black">
                       {m.estate_name} <span className="text-xs opacity-70">({m.estate_tujuan})</span>

@@ -12,6 +12,7 @@ export async function GET() {
         i.tgl_inspeksi,
         i.estate_code,
         e.estate_name,
+        e.company_code,
         i.block,
         i.catatan,
         i.user_id_inspektur,

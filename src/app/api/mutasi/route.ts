@@ -11,6 +11,7 @@ export async function GET() {
         a.asset_name,
         m.estate_tujuan,
         e.estate_name,
+        e.company_code,
         m.block_tujuan,
         m.tgl_pindah,
         m.user_id_pic,

@@ -15,6 +15,7 @@ interface InspeksiRiwayat {
   tgl_inspeksi: string;
   estate_code: string;
   estate_name: string;
+  company_code: string | null;
   block: string | null;
   catatan: string | null;
   inspektur_name: string | null;
@@ -76,6 +77,7 @@ export default function InspeksiPage() {
   });
 
   // Filters state
+  const [filterCompany, setFilterCompany] = useState("");
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
   const [filterIsu, setFilterIsu] = useState("");
@@ -225,10 +227,13 @@ export default function InspeksiPage() {
   };
 
   /* ---- Derived Data (Filters & Export) ---- */
+  const uniqueCompany = Array.from(new Set(riwayatList.map(i => i.company_code).filter(Boolean))) as string[];
+
   const filteredList = riwayatList.filter(i => {
     const d = new Date(i.tgl_inspeksi);
     const passStart = filterStartDate ? d >= new Date(filterStartDate) : true;
     const passEnd = filterEndDate ? d <= new Date(filterEndDate) : true;
+    const passCompany = filterCompany ? i.company_code === filterCompany : true;
     
     let passIsu = true;
     if (filterIsu === "baru") {
@@ -239,7 +244,7 @@ export default function InspeksiPage() {
       passIsu = (!i.issues_opened || i.issues_opened.length === 0) && (!i.issues_solved || i.issues_solved.length === 0);
     }
 
-    return passStart && passEnd && passIsu;
+    return passStart && passEnd && passIsu && passCompany;
   });
 
   const paginatedList = pageSize === 0 
@@ -449,6 +454,17 @@ export default function InspeksiPage() {
       <div className="border-4 border-black bg-white dark:bg-gray-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8 p-4 flex flex-col md:flex-row gap-4 justify-between items-end">
         <div className="flex flex-wrap gap-4 flex-1">
           <div>
+            <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Filter Company</label>
+            <div className="w-40">
+              <SearchableSelect
+                value={filterCompany}
+                onChange={val => { setFilterCompany(val); setCurrentPage(1); }}
+                options={[{value: "", label: "Semua Company"}, ...uniqueCompany.map(c => ({ value: c, label: c }))]}
+                placeholder="Semua Company"
+              />
+            </div>
+          </div>
+          <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Mulai Tanggal</label>
             <input type="date" value={filterStartDate} onChange={e => { setFilterStartDate(e.target.value); setCurrentPage(1); }} className="input-nb py-2 text-sm w-40" />
           </div>
@@ -507,9 +523,10 @@ export default function InspeksiPage() {
             <table className="w-full">
               <thead>
                 <tr className="bg-nb-green text-black border-b-4 border-black">
-                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[15%]">Tanggal</th>
-                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[20%]">Aset & Lokasi</th>
-                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[45%]">Isu / Hasil Inspeksi</th>
+                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[12%]">Tanggal</th>
+                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[10%]">Company</th>
+                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[18%]">Aset & Lokasi</th>
+                  <th className="p-3 text-left text-sm font-black uppercase border-r-4 border-black w-[40%]">Isu / Hasil Inspeksi</th>
                   <th className="p-3 text-center text-sm font-black uppercase w-[20%]">Aksi</th>
                 </tr>
               </thead>
@@ -519,6 +536,9 @@ export default function InspeksiPage() {
                     <td className="p-3 font-black text-black dark:text-white border-r-4 border-black align-top">
                       {new Date(i.tgl_inspeksi).toLocaleDateString('en-GB')}
                       {i.inspektur_name && <div className="text-xs mt-2 font-bold opacity-70">Oleh: {i.inspektur_name}</div>}
+                    </td>
+                    <td className="p-3 font-bold text-black dark:text-white border-r-4 border-black align-top">
+                      {i.company_code || "—"}
                     </td>
                     <td className="p-3 border-r-4 border-black align-top">
                       <div className="font-black text-black dark:text-white text-base leading-tight">{i.asset_code}</div>

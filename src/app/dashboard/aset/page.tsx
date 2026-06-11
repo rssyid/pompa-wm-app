@@ -22,6 +22,7 @@ interface AsetPompa {
   debit_m3_jam: number | null;
   hp_mesin: number | null;
   estate_name: string;
+  company_code: string | null;
   estate_deployed_name: string | null;
   block_deployed: string | null;
 }
@@ -68,6 +69,7 @@ export default function AsetPage() {
   const [editingAssetCode, setEditingAssetCode] = useState<string | null>(null);
 
   // Filters state
+  const [filterCompany, setFilterCompany] = useState("");
   const [filterEstate, setFilterEstate] = useState("");
   const [filterJenis, setFilterJenis] = useState("");
   const [filterMerek, setFilterMerek] = useState("");
@@ -188,9 +190,11 @@ export default function AsetPage() {
   /* ---- Derived Data (Filters & Export) ---- */
   const uniqueJenis = Array.from(new Set(asetList.map(a => a.jenis_pompa).filter(Boolean)));
   const uniqueMerek = Array.from(new Set(asetList.map(a => a.merek).filter(Boolean)));
+  const uniqueCompany = Array.from(new Set(asetList.map(a => a.company_code).filter(Boolean))) as string[];
 
   const filteredList = asetList.filter(a => {
     return (
+      (filterCompany === "" || a.company_code === filterCompany) &&
       (filterEstate === "" || a.est_code === filterEstate || a.est_code_deployed === filterEstate) &&
       (filterJenis === "" || a.jenis_pompa === filterJenis) &&
       (filterMerek === "" || a.merek === filterMerek)
@@ -428,12 +432,23 @@ export default function AsetPage() {
       <div className="border-4 border-black bg-white dark:bg-gray-900 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] mb-8 p-4 flex flex-col md:flex-row gap-4 justify-between items-end">
         <div className="flex flex-wrap gap-4 flex-1">
           <div>
+            <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Filter Company</label>
+            <div className="w-40">
+              <SearchableSelect
+                value={filterCompany}
+                onChange={(val) => { setFilterCompany(val); setFilterEstate(""); setCurrentPage(1); }}
+                options={[{ value: "", label: "Semua Company" }, ...uniqueCompany.map((c) => ({ value: c, label: c }))]}
+                placeholder="Semua Company"
+              />
+            </div>
+          </div>
+          <div>
             <label className="block text-xs font-black text-black dark:text-white mb-1 uppercase">Filter Estate</label>
             <div className="w-48">
               <SearchableSelect
                 value={filterEstate}
                 onChange={(val) => { setFilterEstate(val); setCurrentPage(1); }}
-                options={[{ value: "", label: "Semua Estate" }, ...estateList.map((e) => ({ value: e.estate_code, label: e.estate_name }))]}
+                options={[{ value: "", label: "Semua Estate" }, ...estateList.filter(e => filterCompany === "" || (asetList.find(a => a.est_code === e.estate_code)?.company_code === filterCompany)).map((e) => ({ value: e.estate_code, label: e.estate_name }))]}
                 placeholder="Semua Estate"
               />
             </div>
@@ -510,6 +525,9 @@ export default function AsetPage() {
                     Merek
                   </th>
                   <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-2 border-white/20">
+                    Company
+                  </th>
+                  <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-2 border-white/20">
                     Estate
                   </th>
                   <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-2 border-white/20">
@@ -550,6 +568,9 @@ export default function AsetPage() {
                     </td>
                     <td className="p-3 text-black/70 dark:text-white/70 font-bold border-r-2 border-black/10">
                       {a.merek || "-"}
+                    </td>
+                    <td className="p-3 font-bold text-black dark:text-white border-r-2 border-black/10">
+                      {a.company_code || "—"}
                     </td>
                     <td className="p-3 font-bold text-black dark:text-white border-r-2 border-black/10">
                       {a.estate_name || a.est_code}

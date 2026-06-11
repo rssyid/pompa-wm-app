@@ -19,6 +19,7 @@ export async function GET() {
         t.debit_m3_jam,
         t.hp_mesin,
         e1.estate_name AS estate_name,
+        e1.company_code AS company_code,
         e2.estate_name AS estate_deployed_name,
         (SELECT block_tujuan FROM trn_mutasi_pompa m WHERE m.asset_code = a.asset_code ORDER BY m.tgl_pindah DESC, m.id_mutasi DESC LIMIT 1) AS block_deployed
       FROM trn_aset_pompa a
