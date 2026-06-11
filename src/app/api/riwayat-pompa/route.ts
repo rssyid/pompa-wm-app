@@ -47,8 +47,7 @@ export async function GET(request: Request) {
         m.estate_tujuan,
         e.estate_name AS estate_tujuan_name,
         m.block_tujuan,
-        u.username AS pic_name,
-        m.catatan
+        u.username AS pic_name
        FROM trn_mutasi_pompa m
        JOIN mst_estate e ON m.estate_tujuan = e.estate_code
        LEFT JOIN mst_user u ON m.user_id_pic = u.id_user
@@ -108,7 +107,7 @@ export async function GET(request: Request) {
         estate_tujuan: m.estate_tujuan,
         block_tujuan: m.block_tujuan,
         pic_name: m.pic_name,
-        catatan: m.catatan,
+        catatan: null,
       });
     }
 
