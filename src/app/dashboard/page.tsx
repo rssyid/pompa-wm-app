@@ -25,6 +25,7 @@ interface Mutasi {
   id_mutasi: number;
   tgl_pindah: string;
   asset_name: string;
+  asset_code: string;
   estate_tujuan: string;
 }
 
@@ -215,13 +216,12 @@ export default function DashboardPage() {
                       🚜
                     </div>
                     <div>
-                      <div className="font-bold text-black dark:text-white text-sm">
-                        <span className="font-black">{m.asset_name}</span>{" "}
-                        dipindahkan ke{" "}
-                        <span className="font-black">{m.estate_tujuan}</span>
+                      <div className="font-black text-black dark:text-white text-base leading-tight">{m.asset_name}</div>
+                      <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{m.asset_code}</div>
+                      <div className="text-xs font-bold text-black/60 dark:text-white/60 mt-1">
+                        → <span className="font-black">{m.estate_tujuan}</span>
                       </div>
-                      <div className="text-xs font-bold text-black/50 dark:text-white/50 mt-1">
-                        Tanggal:{" "}
+                      <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5">
                         {new Date(m.tgl_pindah).toLocaleDateString("en-GB")}
                       </div>
                     </div>

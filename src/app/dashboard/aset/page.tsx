@@ -501,10 +501,7 @@ export default function AsetPage() {
                     #
                   </th>
                   <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-2 border-white/20">
-                    Kode Aset
-                  </th>
-                  <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-2 border-white/20">
-                    Nama Aset
+                    Aset Pompa
                   </th>
                   <th className="p-3 text-left text-sm font-black uppercase tracking-wider border-r-2 border-white/20">
                     Jenis Pompa
@@ -543,12 +540,8 @@ export default function AsetPage() {
                       {idx + 1}
                     </td>
                     <td className="p-3 border-r-2 border-black/10">
-                      <span className="badge-nb bg-nb-blue text-black text-xs">
-                        {a.asset_code}
-                      </span>
-                    </td>
-                    <td className="p-3 font-bold text-black dark:text-white border-r-2 border-black/10">
-                      {a.asset_name}
+                      <div className="font-black text-black dark:text-white text-base leading-tight">{a.asset_name}</div>
+                      <div className="text-xs font-bold text-black/40 dark:text-white/40 mt-0.5 tracking-wide">{a.asset_code}</div>
                     </td>
                     <td className="p-3 font-bold text-black dark:text-white border-r-2 border-black/10">
                       {a.jenis_pompa || "-"}
